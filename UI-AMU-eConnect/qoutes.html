@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>eConnect - Quotes</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+            crossorigin="anonymous" />
+    </head>
+
+    <body>
+        <!-- =============Nav Bar============ -->
+        <nav class="navbar navbar-expand-lg bg-dark border-bottom border-body mb-3" data-bs-theme="dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">eConnect</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01"
+                    aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarColor01">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item my-1 my-lg-0">
+                            <a class="btn btn-light me-2" aria-current="page" href="#">Home</a>
+                        </li>
+                        <li class="nav-item my-1 my-lg-0">
+                            <a class="btn btn-light me-2" href="#">Log In</a>
+                        </li>
+                        <li class="nav-item my-1 my-lg-0">
+                            <a class="btn btn-light me-2" href="#">SignUp</a>
+                        </li>
+                        <li class="nav-item my-1 my-lg-0">
+                            <a class="btn btn-light active me-2" href="#">Quotes</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- ============Qoutes============= -->
+        <div class="container mb-4 pt-4">
+            <div class="d-flex justify-content-center mb-2"><h1>Here is a Quote For You !</h1 class=""></div>
+            <!-- ===Quotes API====== -->
+             <div class="container">
+                <figure class="text-center">
+                    <blockquote class="blockquote">
+                      <p>{{ quote }}</p>
+                    </blockquote>
+                    <figcaption class="blockquote-footer">
+                      {{ author }} <cite title="Source Title"></cite>
+                    </figcaption>
+                  </figure>    
+             </div>
+        </div>
+        <!--========Introduction to platform==-->
+        <div class="container text-center">
+            <h3>Motivation Behind the AMU eConnect</h3>
+            <p>With AMU eConnect students of Aligarh 
+                Muslim University can help in doing so. AMU eConnect is a web - based application which 
+                provide its users whole details of an AMU alumni at one place at a glance. Connections and 
+                networking with people are good resources for career growth and support. AMU eConnect is an 
+                alumni connecting web - based application which helps students connects to their ‘ALIG’ 
+                fraternity.
+                A student who wants to connect to its AMU alumni can login and get the details of various past 
+                and current students of AMU. If he/she wishes to connect or see the details provided by the 
+                student can go through it. There is admin who manages the whole platform and is also a user of 
+                the system. Connecting AMU students with its vast alumni network is a crucial endeavor that 
+                often presents challenges. While traditional social media platforms provide avenues for social 
+                interactions, their complexity and lack of specific focus can hinder effective alumni engagement. 
+                AMU eConnect aims to address this gap by offering a dedicated web-based application designed 
+                exclusively for connecting AMU students with their alumni.</p>
+        </div>
+        <!--=============Footer============  -->
+        <nav class="navbar fixed-bottom bg-dark border-bottom border-body bg-body-dark" data-bs-theme="dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Copyright @ Suhel Khan</a>
+                <a class="navbar-brand" href="#">eConnect</a>
+            </div>
+        </nav>
+        <!-- =============JS============ -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
+    </body>
+</html>
