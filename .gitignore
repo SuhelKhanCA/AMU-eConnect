@@ -13,3 +13,4 @@ Thumbs.db
 # Build artifacts
 /build/
 /dist/
+**/__pycache__/
