@@ -1,0 +1,40 @@
+{% extends 'layout.html' %}
+
+
+{% block main %}
+  <main class="alert alert-warning alert-dismissible show fade ms-auto" role="alert"> <!--Add class show if flashed -->
+            {% with messages = get_flashed_messages(with_categories=True) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+            {% endwith %}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </main>
+        <!-- ============login form============= -->
+        <div class="container mb-4">
+            <div class="d-flex justify-content-center"><h1>Log In</h1 class=""></div>
+            <form method="POST" action="{{ url_for('login') }}" onsubmit="disableSubmitButton()">
+                <div class="mb-3">
+                  <label for="email" class="form-label">Email address</label>
+                  <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="mb-3">
+                  <label for="password" class="form-label">Password</label>
+                  <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-dark w-50" id="loginButton1" >Submit</button>
+                </div>
+              </form>
+        </div>
+        <script>
+            function disableSubmitButton() {
+              const loginButton = document.getElementById('loginButton1');
+              loginButton.disabled = true;
+              return true; 
+            }
+        </script>
+{% endblock main %}
+        
