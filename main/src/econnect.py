@@ -6,6 +6,8 @@ from io import BytesIO
 import os
 import requests
 import base64
+from functools import wraps
+
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = "abc"
@@ -51,6 +53,16 @@ class UserDesc(db.Model):
     social4 = db.Column(db.String(150), nullable=True)
     user = db.relationship('User', backref=db.backref('description', uselist=False))
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        # Check if user or admin is logged in
+        if 'user_id' not in session and 'admin_id' not in session:
+            flash("You need to log in to access this page.", "warning")
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 # Login page
 @app.route("/", methods=["GET", "POST"])
 def login():
@@ -77,9 +89,8 @@ def login():
     return render_template("login.html")
 
 # Home page
-import base64
-
 @app.route('/home')
+@login_required
 def index():
     # Fetch all verified user cards for the initial page load
     cards = db.session.query(User, UserDesc).join(UserDesc, User.id == UserDesc.id).filter(User.is_verified == True).all()
@@ -102,8 +113,9 @@ def index():
     
     return render_template('index.html', cards=card_data, departments=departments, courses=courses, passing_years=passing_years)
 
-
+# Filtering cards on cards
 @app.route('/filter_cards', methods=['POST'])
+@login_required
 def filter_cards():
     data = request.get_json()
     department = data.get('department')
@@ -174,6 +186,7 @@ def register():
 
 # Route for admin to verify users
 @app.route('/verify/<int:user_id>', methods=['POST'])
+@login_required
 def verify_user(user_id):
     user = User.query.get_or_404(user_id)
     user.is_verified = True
@@ -182,6 +195,7 @@ def verify_user(user_id):
 
 # Delete users
 @app.route('/delete/<int:user_id>', methods=['POST'])
+@login_required
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
     db.session.delete(user)
@@ -191,12 +205,14 @@ def delete_user(user_id):
 
 # Admin Dashboard to see all unverified users
 @app.route('/admindashboard')
+@login_required
 def admin_dashboard():
     unverified_users = User.query.filter_by(is_verified=False).all()
     return render_template('dashboard.html', users=unverified_users)
 
 # Check ID
 @app.route('/check_id/<int:user_id>')
+@login_required
 def check_id(user_id):
     user = User.query.get_or_404(user_id)
     if user.id_proof and user.id_proof_mime == 'application/pdf':
@@ -212,6 +228,7 @@ def check_id(user_id):
 
 # Profile of Individual user
 @app.route('/profile/<int:user_id>')
+@login_required
 def profile(user_id):
     if 'user_id' not in session:
         flash("You need to log in to view profiles.", "warning")
@@ -226,8 +243,8 @@ def profile(user_id):
         return redirect(url_for('index'))
 
 # Upload section
-
 @app.route('/upload', methods=['GET', 'POST'])
+@login_required
 def upload():
     # Ensure the user is logged in
     if 'user_id' not in session:
@@ -289,6 +306,7 @@ def upload():
 
 # Logout
 @app.route('/logout', methods=['GET', 'POST'])
+@login_required
 def logout():
     session.clear()
     flash('You have been logged out successfully!', 'success')
