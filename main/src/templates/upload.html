@@ -18,11 +18,12 @@
             <form method="POST" enctype="multipart/form-data">
     <div class="form-group">
         <label for="short_desc">Short Description</label>
-        <input type="text" name="short_desc" class="form-control" required>
+        <input type="text" name="short_desc" class="form-control" maxlength="150" required>
+        <div class="form-text mb-2" id="basic-addon4">Brief Intro About 25 words</div>
     </div>
     <div class="form-group">
         <label for="detail_desc">Detail Description</label>
-        <textarea name="detail_desc" class="form-control"></textarea>
+        <textarea name="detail_desc" class="form-control" placeholder="Describe Yourself !"></textarea>
     </div>
     <div class="form-group">
         <label for="passing_year">Year of Passing</label>
@@ -39,6 +40,22 @@
     <div class="form-group">
         <label for="user_image">Upload Image</label>
         <input type="file" name="user_image" class="form-control" accept="image/*" required>
+    </div>
+    <div class="form-group">
+        <label for="social1">Facebook</label>
+        <input type="url" name="social1" class="form-control" placeholder="http://www.facebook.com/..." required>
+    </div>
+    <div class="form-group">
+        <label for="social2">Instagram</label>
+        <input type="url" name="social2" class="form-control" placeholder="http://www.instagram.com/..." required>
+    </div>
+    <div class="form-group">
+        <label for="social3">Twitter</label>
+        <input type="url" name="social3" class="form-control" placeholder="http://www.twitter.com/..." required>
+    </div>
+    <div class="form-group mb-2">
+        <label for="social4">LinkedIn</label>
+        <input type="url" name="social4" class="form-control mb-1" placeholder="http://www.linkedin.com/..." required>
     </div>
     <div class="form-group text-center mb-2">
         <button type="submit" class="btn btn-dark w-50 mb-2">Upload</button>
