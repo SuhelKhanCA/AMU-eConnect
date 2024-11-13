@@ -1,0 +1,154 @@
+{% include 'header.html' %}
+
+{% block main %}
+<!-- =========Search Tab========== -->
+<div class="container mb-4">
+    <div class="nav nav-tabs">
+        <div class="d-flex flex-column flex-md-row w-100">
+            <!-- Department Dropdown -->
+            <div class="btn-group me-2 mb-2 mb-md-0">
+                <button type="button" class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    Department
+                </button>
+                <ul class="dropdown-menu dropdown-menu-center">
+                    <li><button class="dropdown-item department-item" type="button" data-value="">Select Department</button></li>
+                    {% for department in departments %}
+                        <li><button class="dropdown-item department-item" type="button" data-value="{{ department[0] }}">{{ department[0] }}</button></li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Course Dropdown -->
+            <div class="btn-group me-2 mb-2 mb-md-0">
+                <button type="button" class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    Course
+                </button>
+                <ul class="dropdown-menu dropdown-menu-center">
+                    <li><button class="dropdown-item course-item" type="button" data-value="">Select Course</button></li>
+                    {% for course in courses %}
+                        <li><button class="dropdown-item course-item" type="button" data-value="{{ course[0] }}">{{ course[0] }}</button></li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Year of Passing Dropdown -->
+            <div class="btn-group me-2 mb-2 mb-md-0">
+                <button type="button" class="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    Year of Passing
+                </button>
+                <ul class="dropdown-menu dropdown-menu-center">
+                    <li><button class="dropdown-item year-item" type="button" data-value="">Select Year</button></li>
+                    {% for year in passing_years %}
+                        <li><button class="dropdown-item year-item" type="button" data-value="{{ year[0] }}">{{ year[0] }}</button></li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+            <!-- Search Input and Button -->
+            <div class="ms-auto w-100">
+                <form class="d-flex w-100" role="search">
+                    <input id="searchInput" class="form-control me-2 mb-2 mb-md-0 flex-grow-1" type="search" placeholder="Search Name or Enrollment No." aria-label="Search" />
+                    <button id="searchButton" class="btn btn-outline-dark" type="button">Search</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cards Container -->
+<div class="container">
+    <div class="row row-cols-1 row-cols-md-3 g-4" id="cardsContainer">
+        {% for card in cards %}
+        <div class="col">
+            <div class="card h-100">
+                <img src="data:image/jpeg;base64,{{ card.user_image }}" class="card-img-top img-fluid d-block w-100" style="height: 300px" alt="{{ card.name }}" />
+                <div class="card-body">
+                    <h5 class="card-title">{{ card.name }}</h5>
+                    <p class="card-text">{{ card.course }} - {{ card.department }} {{ card.passing_year }}</p>
+                    <p>{{card.short_desc}}</p>
+                </div>
+                <a href="{{ url_for('profile', user_id=card.id) }}" class="btn btn-dark mb-1 ">View Profile</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let department = '';
+        let course = '';
+        let year_of_passing = '';
+        const searchButton = document.getElementById("searchButton");
+        const searchInput = document.getElementById("searchInput");
+
+        // Dropdown item event listeners
+        document.querySelectorAll('.department-item').forEach(item => {
+            item.addEventListener('click', function() {
+                department = this.getAttribute('data-value');
+            });
+        });
+
+        document.querySelectorAll('.course-item').forEach(item => {
+            item.addEventListener('click', function() {
+                course = this.getAttribute('data-value');
+            });
+        });
+
+        document.querySelectorAll('.year-item').forEach(item => {
+            item.addEventListener('click', function() {
+                year_of_passing = this.getAttribute('data-value');
+            });
+        });
+
+        // Search button click handler
+        searchButton.addEventListener("click", function () {
+            const search_term = searchInput.value;
+
+            fetch('/filter_cards', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    department: department,
+                    course: course,
+                    year_of_passing: year_of_passing,
+                    search_term: search_term
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const cardsContainer = document.getElementById("cardsContainer");
+                cardsContainer.innerHTML = '';
+
+                if (data.length === 0) {
+                    cardsContainer.innerHTML = '<p>No results found.</p>';
+                } else {
+                    data.forEach(card => {
+                        cardsContainer.innerHTML += `
+                            <div class="col">
+                                <div class="card h-100">
+                                    <img src="data:image/jpeg;base64,${card.user_image}" class="card-img-top img-fluid d-block w-100" style="height: 300px" alt="${card.name}" />
+                                    <div class="card-body">
+                                        <h5 class="card-title">${card.name}</h5>
+                                        <p class="card-text">${card.course} - ${card.department} (${card.passing_year})</p>
+                                        <p>{{cards.short_desc}}</p>
+                                    </div>
+                                <a href="/profile/${card.id}" class="btn btn-dark mb-1">View Profile</a>    
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                document.getElementById("cardsContainer").innerHTML = '<p>There was an error processing the request.</p>';
+            });
+        });
+    });
+</script>
+{% endblock main %}
+
+{% include 'footer.html' %}

@@ -1,0 +1,44 @@
+{% extends 'layout.html' %}
+
+{% block main %}
+        <!-- ============Register form============= -->
+        <div class="container mb-4 w-50">
+            <div class="d-flex justify-content-center">
+                <h1>Register</h1 class="">
+            </div>
+            <form method="POST" enctype="multipart/form-data" action="{{ url_for('register') }}">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email address</label>
+                    <input type="email" name="email" class="form-control" id="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Full Name</label>
+                    <input type="text" name="name" class="form-control" id="name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" id="password" required>
+                </div>
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">Confirm Password</label>
+                    <input type="password" class="form-control" id="confirmPassword">
+                </div>
+                <div class="mb-3">
+                    <label for="enrollment_no" class="form-label">Enrollment No.</label>
+                    <input type="text" class="form-control" name="enrollment_no" id="enrollment_no">
+                </div>
+                <div class="mb-3">
+                    <label for="faculty_no" class="form-label">Fculty No.</label>
+                    <input type="text" class="form-control" name="faculty_no" id="faculty_no">
+                </div>
+                <div class="mb-3">
+                    <label for="id_proof" class="form-label">Upload ID Proof</label>
+                    <input type="file" name="id_proof" id="id_proof" accept="application/pdf" required>
+                           <p class="form-text mb-2 float-end" id="basic-addon4">Support .pdf only</p>
+                </div>
+                <div class="d-flex justify-content-center mb-2">
+                    <button type="submit" class="btn btn-dark mb-2" >Register</button>
+                </div>
+            </form>
+        </div>
+{% endblock main %}

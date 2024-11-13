@@ -1,0 +1,55 @@
+body {
+    margin-bottom: 60px;
+}
+
+footer {
+    height: 60px;
+    z-index: 1030;
+}
+
+i {
+    font-size: 36px;
+    color: #1e1e1e;
+}
+.foot_i {
+    font-size: 36px;
+    color: white;
+}
+:root {
+    --bg-color: #faf9f6;
+    --maroon: #9c1006;
+    --green: #22690d;
+    --text-color: #333333;
+    --secondary-bg: #e8e8e8;
+}
+.nav-bg-color {
+    background-color: rgb(128, 0, 0);
+    padding: 20px;
+}
+.footer {
+    background-color: #063;
+}
+.button-color {
+    color: #10380f;
+}
+.navbar-toggler {
+    border-color: #fff; 
+}
+
+.navbar-toggler:hover {
+    border-color: #fff;
+}
+.btn-dark {
+    background-color: #063;
+}
+.btn-dark:hover {
+    background-color: #065;
+}
+.btn-outline-dark:hover {
+    background: #063;
+    color: #fff;
+}
+.btn-light:hover {
+    background-color: #063;
+    color: white;
+}
