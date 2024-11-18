@@ -6,14 +6,16 @@
     <!-- ============Profile============= -->
     <div class="container text-center mb-4">
       <div class="row">
-        <div class="col float-start text-center">
+        <!-- Profile Image and Short Description -->
+        <div class="col-md-6 text-center mb-3">
           <h1>{{ user.name }}'s Profile</h1>
-          <img src="data:image/jpeg;base64,{{ image }}" class="card-img img-fluid d-block h-75" alt="{{ user.name }}" />
-          <p class="">
+          <img src="data:image/jpeg;base64,{{ image }}" class="card-img img-fluid rounded d-block mx-auto" alt="{{ user.name }}" />
+          <p class="mt-3">
             {{ user_desc.short_desc }}
           </p>
         </div>
-        <div class="col float-end">
+        <!-- About Me and Social Links -->
+        <div class="col-md-6">
           <h3>About Me</h3>
           <p>Department: {{ user_desc.department }}</p>
           <p>Course: {{ user_desc.course }}</p>
@@ -22,7 +24,7 @@
           <p>Enrollment Number: {{ user.enrollment_no }}</p>
           <p>Faculty Number: {{ user.faculty_no }}</p>
           <p>Detailed Description: {{ user_desc.detail_desc }}</p>
-          <div class="">
+          <div class="mt-4">
             <h3>Social Links</h3>
             <a class="me-2" href="{{ user_desc.social1 }}"><i class="fab fa-facebook"></i></a>
             <a class="me-2" href="{{ user_desc.social2 }}"><i class="fab fa-instagram"></i></a>
