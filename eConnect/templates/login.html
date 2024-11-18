@@ -1,5 +1,7 @@
 {% extends 'layout.html' %}
-
+{% block title %}
+  <title> Login </title>     
+{% endblock title %}
 {% block main %}
     <!-- Flash Messages Section -->
     {% with messages = get_flashed_messages(with_categories=True) %}
