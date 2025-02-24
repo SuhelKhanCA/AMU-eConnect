@@ -1,7 +1,9 @@
 Ignore virtual env in any main or sub directory
-
+**/*.pyc
 **/venv/
 **/.venv/
+.*
+.gitignore
 # Operating system files
 .DS_Store
 Thumbs.db
@@ -14,3 +16,6 @@ Thumbs.db
 /build/
 /dist/
 **/__pycache__/
+*.db
+
+
