@@ -3,21 +3,34 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from io import BytesIO
+
 import os
+from dotenv import load_dotenv
+load_dotenv()
+
 import requests
 import base64
 from functools import wraps
 
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = "abc"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///econnect3.db'
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
 # Admin table model
 class Admin(db.Model):
+    """
+    Admin table model.
+
+    Attributes:
+        id (int): Primary key.
+        name (str): Admin's name.
+        email (str): Admin's email.
+        password (str): Admin's password.
+    """
     __tablename__ = 'econnect_admin'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
@@ -26,6 +39,20 @@ class Admin(db.Model):
 
 # User table model
 class User(db.Model):
+    """
+    User table model.
+
+    Attributes:
+        id (int): Primary key.
+        name (str): User's name.
+        email (str): User's email.
+        password (str): User's password.
+        enrollment_no (str): User's enrollment number.
+        faculty_no (str): User's faculty number.
+        id_proof (bytes): User's ID proof.
+        id_proof_mime (str): MIME type of the ID proof.
+        is_verified (bool): Verification status of the user.
+    """
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
@@ -39,6 +66,22 @@ class User(db.Model):
 
 # User Description table model
 class UserDesc(db.Model):
+    """
+    User Description table model.
+
+    Attributes:
+        id (int): Primary key, foreign key to User table.
+        short_desc (str): Short description of the user.
+        detail_desc (str): Detailed description of the user.
+        passing_year (int): User's passing year.
+        user_image (bytes): User's image.
+        department (str): User's department.
+        course (str): User's course.
+        social1 (str): User's first social link.
+        social2 (str): User's second social link.
+        social3 (str): User's third social link.
+        social4 (str): User's fourth social link.
+    """
     __tablename__ = 'user_desc'
     id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     short_desc = db.Column(db.String(250), nullable=True)
@@ -54,6 +97,15 @@ class UserDesc(db.Model):
     user = db.relationship('User', backref=db.backref('description', uselist=False))
 
 def login_required(f):
+    """
+    Decorator to ensure that the user is logged in.
+
+    Args:
+        f (function): The function to be decorated.
+
+    Returns:
+        function: The decorated function.
+    """
     @wraps(f)
     def decorated_function(*args, **kwargs):
         # Check if user or admin is logged in
@@ -66,6 +118,16 @@ def login_required(f):
 # Login page
 @app.route("/", methods=["GET", "POST"])
 def login():
+    """
+    Route for the login page.
+
+    Methods:
+        GET: Render the login page.
+        POST: Handle the login form submission.
+
+    Returns:
+        Response: The rendered template or a redirect response.
+    """
     if request.method == "POST":
         email = request.form["email"]
         password = request.form["password"]
@@ -92,6 +154,15 @@ def login():
 @app.route('/home')
 @login_required
 def index():
+    """
+    Route for the home page.
+
+    Methods:
+        GET: Render the home page with user cards.
+
+    Returns:
+        Response: The rendered template.
+    """
     # Fetch all verified user cards for the initial page load
     cards = db.session.query(User, UserDesc).join(UserDesc, User.id == UserDesc.id).filter(User.is_verified == True).all()
 
@@ -111,12 +182,21 @@ def index():
     courses = db.session.query(UserDesc.course).distinct().all()
     passing_years = db.session.query(UserDesc.passing_year).distinct().all()
     
-    return render_template('index2.html', cards=card_data, departments=departments, courses=courses, passing_years=passing_years)
+    return render_template('index.html', cards=card_data, departments=departments, courses=courses, passing_years=passing_years)
 
 # Filtering cards on cards
 @app.route('/filter_cards', methods=['POST'])
 @login_required
 def filter_cards():
+    """
+    Route to filter user cards based on search criteria.
+
+    Methods:
+        POST: Handle the filter form submission.
+
+    Returns:
+        Response: JSON response with filtered user cards.
+    """
     data = request.get_json()
     department = data.get('department')
     course = data.get('course')
@@ -156,6 +236,16 @@ def filter_cards():
 # Register Page
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    """
+    Route for the registration page.
+
+    Methods:
+        GET: Render the registration page.
+        POST: Handle the registration form submission.
+
+    Returns:
+        Response: The rendered template or a redirect response.
+    """
     if request.method == 'POST':
         name = request.form['name']
         email = request.form['email']
@@ -188,6 +278,18 @@ def register():
 @app.route('/verify/<int:user_id>', methods=['POST'])
 @login_required
 def verify_user(user_id):
+    """
+    Route for admin to verify users.
+
+    Methods:
+        POST: Handle the verification form submission.
+
+    Args:
+        user_id (int): The ID of the user to be verified.
+
+    Returns:
+        Response: Redirect response to the admin dashboard.
+    """
     user = User.query.get_or_404(user_id)
     user.is_verified = True
     db.session.commit()
@@ -197,6 +299,18 @@ def verify_user(user_id):
 @app.route('/delete/<int:user_id>', methods=['POST'])
 @login_required
 def delete_user(user_id):
+    """
+    Route to delete a user.
+
+    Methods:
+        POST: Handle the delete form submission.
+
+    Args:
+        user_id (int): The ID of the user to be deleted.
+
+    Returns:
+        Response: Redirect response to the admin dashboard.
+    """
     user = User.query.get_or_404(user_id)
     db.session.delete(user)
     db.session.commit()
@@ -207,6 +321,15 @@ def delete_user(user_id):
 @app.route('/admindashboard')
 @login_required
 def admin_dashboard():
+    """
+    Route for the admin dashboard.
+
+    Methods:
+        GET: Render the admin dashboard with unverified users.
+
+    Returns:
+        Response: The rendered template.
+    """
     unverified_users = User.query.filter_by(is_verified=False).all()
     return render_template('dashboard.html', users=unverified_users)
 
@@ -214,6 +337,18 @@ def admin_dashboard():
 @app.route('/check_id/<int:user_id>')
 @login_required
 def check_id(user_id):
+    """
+    Route to check the ID proof of a user.
+
+    Methods:
+        GET: Send the ID proof file if available.
+
+    Args:
+        user_id (int): The ID of the user whose ID proof is to be checked.
+
+    Returns:
+        Response: The ID proof file or a redirect response.
+    """
     user = User.query.get_or_404(user_id)
     if user.id_proof and user.id_proof_mime == 'application/pdf':
         return send_file(
@@ -230,6 +365,18 @@ def check_id(user_id):
 @app.route('/profile/<int:user_id>')
 @login_required
 def profile(user_id):
+    """
+    Route for the profile page of an individual user.
+
+    Methods:
+        GET: Render the profile page with user details.
+
+    Args:
+        user_id (int): The ID of the user whose profile is to be viewed.
+
+    Returns:
+        Response: The rendered template or a redirect response.
+    """
     if 'user_id' not in session:
         flash("You need to log in to view profiles.", "warning")
         return redirect(url_for('login'))
@@ -246,6 +393,16 @@ def profile(user_id):
 @app.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload():
+    """
+    Route for the upload section.
+
+    Methods:
+        GET: Render the upload page.
+        POST: Handle the upload form submission.
+
+    Returns:
+        Response: The rendered template or a redirect response.
+    """
     # Ensure the user is logged in
     if 'user_id' not in session:
         flash("You need to log in to upload your details.", "warning")
@@ -308,6 +465,16 @@ def upload():
 @app.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
+    """
+    Route for logging out.
+
+    Methods:
+        GET: Handle the logout request.
+        POST: Handle the logout request.
+
+    Returns:
+        Response: Redirect response to the login page.
+    """
     session.clear()
     flash('You have been logged out successfully!', 'success')
     return redirect(url_for('login'))
@@ -315,6 +482,15 @@ def logout():
 # About page - with a Random Quote from random-Quote-API
 @app.route('/about')
 def about():
+    """
+    Route for the about page.
+
+    Methods:
+        GET: Render the about page with a random quote.
+
+    Returns:
+        Response: The rendered template.
+    """
     url = "https://api.freeapi.app/api/v1/public/quotes/quote/random"
     response = requests.get(url)
     data = response.json()
