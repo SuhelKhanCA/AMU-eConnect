@@ -134,7 +134,8 @@ def login():
 
         # Check if the user is admin
         admin = Admin.query.filter_by(email=email).first()
-        if admin and admin.password == password:
+        
+        if admin and password == os.getenv("ADMIN_PASS"):
             session["admin_id"] = admin.id
             return redirect(url_for("admin_dashboard"))
 
