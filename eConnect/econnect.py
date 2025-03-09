@@ -20,6 +20,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
+
+
 # Admin table model
 class Admin(db.Model):
     """
@@ -61,7 +63,7 @@ class User(db.Model):
     enrollment_no = db.Column(db.String(10), nullable=True)
     faculty_no = db.Column(db.String(10), nullable=True)
     id_proof = db.Column(db.LargeBinary, nullable=False)
-    id_proof_mime = db.Column(db.String(50), nullable=True)  # New MIME type column
+    id_proof_mime = db.Column(db.String(50), nullable=True)
     is_verified = db.Column(db.Boolean, default=False)
 
 # User Description table model
@@ -115,6 +117,7 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+
 # Login page
 @app.route("/", methods=["GET", "POST"])
 def login():
@@ -134,8 +137,8 @@ def login():
 
         # Check if the user is admin
         admin = Admin.query.filter_by(email=email).first()
-        
-        if admin and password == os.getenv("ADMIN_PASS"):
+        print(admin)
+        if admin and check_password_hash(admin.password, password):
             session["admin_id"] = admin.id
             return redirect(url_for("admin_dashboard"))
 

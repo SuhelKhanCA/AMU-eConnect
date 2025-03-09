@@ -1,5 +1,5 @@
 Ignore virtual env in any main or sub directory
-
+*
 **/venv/
 **/.venv/
 # Operating system files
@@ -14,3 +14,5 @@ Thumbs.db
 /build/
 /dist/
 **/__pycache__/
+
+.*
